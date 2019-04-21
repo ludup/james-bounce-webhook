@@ -9,7 +9,7 @@ With Maven and a Java 8 JDK installed clone the git repository.
 
 Build the project using
 
-mvn clean package
+<pre>mvn clean package</pre>
 
 Get the jar with dependencies from the target folder and place it in [james install]/conf/lib
 
@@ -18,10 +18,10 @@ To install the mailet, open file [james install]/conf/mailetcontainer.xml
 Add the entry in processor "bounces" as the first entry as follows
 
 <pre>
-%lt;mailet match="All" class="com.jadaptive.mail.bounce.mailet.BounceMailRemoteUpdate"&gt;
-%lt;remoteUrlToUpdate&gt;https://example.com/bounce</remoteUrlToUpdate&gt;
-%lt;urlEmailParamName&gt;email&lt;/urlEmailParamName&gt;
-%lt;/mailet&gt;
+&lt;mailet match="All" class="com.jadaptive.mail.bounce.mailet.BounceMailRemoteUpdate"&gt;
+   &lt;remoteUrlToUpdate&gt;https://example.com/bounce&lt;/remoteUrlToUpdate&gt;
+   &lt;urlEmailParamName&gt;email&lt;/urlEmailParamName&gt;
+&lt;/mailet&gt;
 </pre>
 
-The above configuration will send a HTTP GET request to https://example.com/bounce?email=<bounced_address>
+Restart Apache James and the above configuration will start sending a HTTP GET request to https://example.com/bounce?email=<bounced_address>
