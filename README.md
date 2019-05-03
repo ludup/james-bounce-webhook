@@ -19,9 +19,10 @@ Add the entry in processor "bounces" as the first entry as follows
 
 <pre>
 &lt;mailet match="All" class="com.jadaptive.mail.bounce.mailet.BounceMailRemoteUpdate"&gt;
-   &lt;remoteUrlToUpdate&gt;https://example.com/bounce&lt;/remoteUrlToUpdate&gt;
-   &lt;urlEmailParamName&gt;email&lt;/urlEmailParamName&gt;
+   &lt;defaultUrl&gt;https://example.com/bounce&lt;/defaultUrl&gt;
+   &lt;paramName&gt;email&lt;/paramName&gt;
 &lt;/mailet&gt;
+   &lt;domainUrl.1&gt;jadaptive.com=https://alternative.com/bounce&lt;/domainUrl.1&gt;
 </pre>
 
 Restart Apache James and the above configuration will start sending a HTTP GET request to https://example.com/bounce?email=<bounced_address>
