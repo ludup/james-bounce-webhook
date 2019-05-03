@@ -22,6 +22,7 @@ Add the entry in processor "bounces" as the first entry as follows
    &lt;defaultUrl&gt;https://example.com/bounce&lt;/defaultUrl&gt;
    &lt;paramName&gt;email&lt;/paramName&gt;
    &lt;domainUrl.1&gt;jadaptive.com=https://alternative.com/bounce&lt;/domainUrl.1&gt;
+   &lt;domainUrl.2&gt;logonbox.com=https://alternative2.com/bounce&lt;/domainUrl.2&gt;
 &lt;/mailet&gt;
    
 </pre>
