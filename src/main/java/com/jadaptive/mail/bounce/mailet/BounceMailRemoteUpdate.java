@@ -1,6 +1,8 @@
 package com.jadaptive.mail.bounce.mailet;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 
@@ -18,8 +20,10 @@ public class BounceMailRemoteUpdate extends GenericMailet {
 	
 
 	private MailetConfig config;
-	private String remoteUrlToUpdate;
-	private String urlEmailParamName;
+	private String remoteUrl;
+	private String paramName;
+	
+	private Map<String,String> remoteUrlDomains = new HashMap<>();
 	
 	private RemoteUpdater remoteUpdater;
 	
@@ -41,18 +45,32 @@ public class BounceMailRemoteUpdate extends GenericMailet {
 	public void init(MailetConfig newConfig) throws MessagingException {
 		super.init(newConfig);
 		this.config = newConfig;
-		this.remoteUrlToUpdate = getInitParameter("remoteUrlToUpdate");
-		this.urlEmailParamName = getInitParameter("urlEmailParamName");
+		this.remoteUrl = getInitParameter("defaultUrl");
+		this.paramName = getInitParameter("paramName", "email");
 		
-		log.info("The remote url to update is {}", this.remoteUrlToUpdate);
-		log.info("The url email param name is {}", this.urlEmailParamName);
+		log.info("The default remote url is {}", this.remoteUrl);
+		log.info("The param name is {}", this.paramName);
+		
+		for(int i=1;;i++) {
+			String url = getInitParameter("domainUrl." + i);
+			if(url==null) {
+				break;
+			}
+			
+			String domain = StringUtils.substringBefore(url, "=");
+			String alternativeUrl = StringUtils.substringAfter(url, "=");
+			remoteUrlDomains.put(domain, alternativeUrl);
+			
+			log.info("Alternative url for domain {} is {}", domain, alternativeUrl);
+		}
+		
 	}
 
 	@Override
 	public void service(Mail mail) throws MessagingException {
 
-		if (StringUtils.isBlank(this.remoteUrlToUpdate) 
-				|| StringUtils.isBlank(this.urlEmailParamName)) {
+		if (StringUtils.isBlank(this.remoteUrl) 
+				|| StringUtils.isBlank(this.paramName)) {
 			throw new IllegalStateException("Remote URL to update is not set or the param name.");
 		}
 		
@@ -60,9 +78,14 @@ public class BounceMailRemoteUpdate extends GenericMailet {
 		String emailSender = mail.getMaybeSender().asOptional().map(MailAddress::asString).orElse("NA");
 		log.info("Email bounced for user {}", emailSender);
 
+		String domain = StringUtils.substringAfter(emailSender, "@");
+		String url = remoteUrlDomains.get(domain);
+		if(url==null) {
+			url = remoteUrl;
+		}
 		Collection<MailAddress> recipients = mail.getRecipients();
 		if (!recipients.isEmpty()) {
-				this.remoteUpdater.service(this.remoteUrlToUpdate, this.urlEmailParamName, recipients);
+				this.remoteUpdater.service(url, this.paramName, recipients);
 		}
 
 	}
